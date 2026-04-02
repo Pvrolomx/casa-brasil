@@ -47,7 +47,7 @@ export async function getServerSideProps({ res, query }) {
       fTitle:'Check availability',
       fName:'Name', fEmail:'Email', fCheckin:'Check-in', fCheckout:'Check-out',
       fMsg:'Message', fMsgPh:"E.g. Looking for a monthly stay, what's the price?",
-      fSubmit:'Send (opens email client)', fNote:'This form opens your mail client with the message ready (no backend).',
+      fSubmit:'Send message', fNote:'',
     },
     es: {
       htmlLang:'es', title:'Casa Brasil Terrace | Rooftop Apartment in Puerto Vallarta',
@@ -92,7 +92,7 @@ export async function getServerSideProps({ res, query }) {
       fTitle:'Consultar disponibilidad',
       fName:'Nombre', fEmail:'Email', fCheckin:'Check-in', fCheckout:'Check-out',
       fMsg:'Mensaje', fMsgPh:'Ej: Busco estancia mensual, ¿precio y condiciones?',
-      fSubmit:'Enviar (genera correo)', fNote:'Este formulario abre tu cliente de correo con el mensaje listo.',
+      fSubmit:'Enviar mensaje', fNote:'',
     },
     fr: {
       htmlLang:'fr', title:'Casa Brasil Terrace | Rooftop Apartment in Puerto Vallarta',
@@ -137,7 +137,7 @@ export async function getServerSideProps({ res, query }) {
       fTitle:'Vérifier les disponibilités',
       fName:'Nom', fEmail:'Email', fCheckin:'Arrivée', fCheckout:'Départ',
       fMsg:'Message', fMsgPh:"Ex : Je cherche un séjour mensuel, quel est le tarif ?",
-      fSubmit:'Envoyer (ouvre le client mail)', fNote:'Ce formulaire ouvre votre client de messagerie avec le message prêt.',
+      fSubmit:'Envoyer le message', fNote:'',
     },
   }
 
@@ -323,7 +323,7 @@ export async function getServerSideProps({ res, query }) {
         </div>
         <label class="text-sm">${d.fMsg}<textarea class="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-200" name="message" rows="4" placeholder="${d.fMsgPh}"></textarea></label>
         <button class="mt-2 inline-flex items-center justify-center rounded-2xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800">${d.fSubmit}</button>
-        <p class="text-xs text-zinc-500">${d.fNote}</p>
+        ${d.fNote ? `<p class="text-xs text-zinc-500">${d.fNote}</p>` : ""}
       </div>
     </form>
   </div>
