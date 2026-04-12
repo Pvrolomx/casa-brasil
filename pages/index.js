@@ -338,12 +338,42 @@ export async function getServerSideProps({ res, query }) {
 
 <script>
 document.getElementById("yr").textContent=new Date().getFullYear();
-function handleSubmit(e){
+async function handleSubmit(e){
   e.preventDefault();
-  const data=new FormData(e.target);
-  const subject=encodeURIComponent("Inquiry — Casa Brasil Terrace");
-  const body=encodeURIComponent("Name: "+(data.get("name")||"")+"\\nEmail: "+(data.get("email")||"")+"\\nCheck-in: "+(data.get("checkin")||"")+"\\nCheck-out: "+(data.get("checkout")||"")+"\\n\\nMessage:\\n"+(data.get("message")||""));
-  window.location.href="mailto:advisor@expatadvisormx.com?subject="+subject+"&body="+body;
+  const form=e.target;
+  const btn=form.querySelector("button[type=submit]");
+  const data=new FormData(form);
+  const name=data.get("name")||"";
+  const email=data.get("email")||"";
+  const checkin=data.get("checkin")||"";
+  const checkout=data.get("checkout")||"";
+  const message=data.get("message")||"";
+  btn.disabled=true;
+  btn.textContent="Sending...";
+  try {
+    const res=await fetch("https://email-service-two-hazel.vercel.app/api/send",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        to:"advisor@expatadvisormx.com",
+        subject:"[Casa Brasil] Inquiry from "+name,
+        message:"New inquiry from brasil.castlesolutions.mx\n\nName: "+name+"\nEmail: "+email+"\nCheck-in: "+checkin+"\nCheck-out: "+checkout+"\n\nMessage:\n"+message,
+        from:email,
+        name:name,
+        sendFrom:"expatadvisormx.com"
+      })
+    });
+    const result=await res.json();
+    if(result.success){
+      form.innerHTML='<p style="color:#059669;font-weight:600;padding:1rem 0">✓ Message sent! We\'ll get back to you shortly.</p>';
+    } else {
+      throw new Error(result.error||"Failed");
+    }
+  } catch(err){
+    btn.disabled=false;
+    btn.textContent="Send message";
+    alert("Could not send. Please contact us via WhatsApp.");
+  }
   return false;
 }
 <\/script>
