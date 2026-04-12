@@ -355,7 +355,7 @@ async function handleSubmit(e){
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
-        to:"advisor@expatadvisormx.com",
+        to:"info@expatadvisormx.com",
         subject:"[Casa Brasil] Inquiry from "+name,
         message:"New inquiry from brasil.castlesolutions.mx\n\nName: "+name+"\nEmail: "+email+"\nCheck-in: "+checkin+"\nCheck-out: "+checkout+"\n\nMessage:\n"+message,
         from:email,
