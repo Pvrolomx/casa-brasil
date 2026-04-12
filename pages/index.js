@@ -148,7 +148,7 @@ export async function getServerSideProps({ res, query }) {
   }
 
   const d = T[lang]
-  const wa = `https://wa.me/523223068482?text=${waMsg[lang]}`
+  const wa = `https://wa.me/523221110294?text=${waMsg[lang]}`
   const maps = 'https://www.google.com/maps/search/?api=1&query=Calle%20Brasil%201434%20Puerto%20Vallarta'
   const lb = (l, label) => `<a href="?lang=${l}" style="padding:.25rem .55rem;border-radius:.375rem;font-size:.75rem;font-weight:600;letter-spacing:.05em;text-decoration:none;${lang===l?'background:#059669;color:white;':'color:#6b7280;'}">${label}</a>`
 
