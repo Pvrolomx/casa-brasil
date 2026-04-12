@@ -343,7 +343,7 @@ function handleSubmit(e){
   const data=new FormData(e.target);
   const subject=encodeURIComponent("Inquiry — Casa Brasil Terrace");
   const body=encodeURIComponent("Name: "+(data.get("name")||"")+"\\nEmail: "+(data.get("email")||"")+"\\nCheck-in: "+(data.get("checkin")||"")+"\\nCheck-out: "+(data.get("checkout")||"")+"\\n\\nMessage:\\n"+(data.get("message")||""));
-  window.location.href="mailto:tucorreo@dominio.com?subject="+subject+"&body="+body;
+  window.location.href="mailto:advisor@expatadvisormx.com?subject="+subject+"&body="+body;
   return false;
 }
 <\/script>
