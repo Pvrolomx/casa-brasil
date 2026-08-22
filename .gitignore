@@ -1,0 +1,4 @@
+node_modules/
+.next/
+# generado en build por el script "css" (ver package.json)
+public/tailwind.css

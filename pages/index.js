@@ -7,6 +7,7 @@ export async function getServerSideProps({ res, query }) {
     en: {
       htmlLang:'en', title:'Casa Brasil Terrace | Rooftop Apartment in Puerto Vallarta',
       meta:'Boutique rooftop apartment with private terrace in Puerto Vallarta. Walk to the beach, market and downtown.',
+      fSending:'Sending…', fOk:'✓ Message sent! We will get back to you shortly.', fErr:'Could not send. Please contact us via WhatsApp.',
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Check availability',
       badge:'Private terrace · beach + market within walking distance · authentic neighborhood',
       heroDesc:'A boutique rooftop apartment with a private terrace in Puerto Vallarta. Walk to the beach, the municipal market and downtown.',
@@ -50,8 +51,9 @@ export async function getServerSideProps({ res, query }) {
       fSubmit:'Send message', fNote:'',
     },
     es: {
-      htmlLang:'es', title:'Casa Brasil Terrace | Rooftop Apartment in Puerto Vallarta',
+      htmlLang:'es', title:'Casa Brasil Terrace | Departamento con terraza privada en Puerto Vallarta',
       meta:'Apartamento boutique con terraza privada en Puerto Vallarta. Playa, mercado y centro caminando.',
+      fSending:'Enviando…', fOk:'✓ ¡Mensaje enviado! Te respondemos en breve.', fErr:'No se pudo enviar. Contáctanos por WhatsApp.',
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Consultar disponibilidad',
       badge:'Terraza privada · playa + mercado municipal caminando · barrio auténtico',
       heroDesc:'Apartamento boutique de 1 recámara con terraza privada para vivir Puerto Vallarta como local: playa, mercado municipal y centro caminando.',
@@ -95,8 +97,9 @@ export async function getServerSideProps({ res, query }) {
       fSubmit:'Enviar mensaje', fNote:'',
     },
     fr: {
-      htmlLang:'fr', title:'Casa Brasil Terrace | Rooftop Apartment in Puerto Vallarta',
+      htmlLang:'fr', title:'Casa Brasil Terrace | Appartement avec terrasse privée à Puerto Vallarta',
       meta:'Appartement boutique avec terrasse privée à Puerto Vallarta. Plage, marché municipal et centre-ville à pied.',
+      fSending:'Envoi…', fOk:'✓ Message envoyé ! Nous vous répondrons rapidement.', fErr:'Envoi impossible. Contactez-nous via WhatsApp.',
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Vérifier les disponibilités',
       badge:'Terrasse privée · plage + marché à pied · quartier authentique',
       heroDesc:'Appartement rooftop boutique avec terrasse privée à Puerto Vallarta. Plage, marché municipal et centre-ville accessibles à pied.',
@@ -150,7 +153,50 @@ export async function getServerSideProps({ res, query }) {
   const d = T[lang]
   const wa = `https://wa.me/523221110294?text=${waMsg[lang]}`
   const maps = 'https://www.google.com/maps/search/?api=1&query=Calle%20Brasil%201434%20Puerto%20Vallarta'
+  const SITE = 'https://brasil.castlesolutions.mx'
+
+  // FOTO PRINCIPAL. Hoy es stock de Unsplash: sustituir por la foto real del depa.
+  // Se usa en el hero y, recortada, como og:image (la tarjeta de WhatsApp/Facebook).
+  const HERO = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2400&q=80'
+  const OG_IMAGE = HERO.replace(/w=\d+/, 'w=1200') + '&h=630'
+  const OG_LOCALE = { en:'en_US', es:'es_MX', fr:'fr_FR' }
+  const canonical = SITE + (lang === 'en' ? '/' : '/?lang=' + lang)
+
+  // Serializa un objeto a JS para inyectarlo en el <script> inline.
+  // Todo el HTML de abajo es un template literal, asi que cualquier secuencia
+  // de escape escrita a mano se la come JS antes de emitirse y rompe el script
+  // (ya paso: la plantilla del correo y un apostrofe tumbaban el bloque entero).
+  // JSON.stringify escapa correcto; el replace evita cerrar el <script> por accidente.
+  const J = o => JSON.stringify(o).replace(/</g, '\\u003c')
+
   const lb = (l, label) => `<a href="?lang=${l}" style="padding:.25rem .55rem;border-radius:.375rem;font-size:.75rem;font-weight:600;letter-spacing:.05em;text-decoration:none;${lang===l?'background:#059669;color:white;':'color:#6b7280;'}">${label}</a>`
+
+
+  // Datos estructurados. Solo hechos que ya declara la pagina: no inventar
+  // precio, aforo ni coordenadas mientras no esten confirmados.
+  const ld = {
+    '@context':'https://schema.org',
+    '@type':'Apartment',
+    name:'Casa Brasil Terrace',
+    description:d.meta,
+    url:canonical,
+    image:[OG_IMAGE],
+    numberOfBedrooms:1,
+    address:{
+      '@type':'PostalAddress',
+      streetAddress:'Calle Brasil 1434 Altos',
+      addressLocality:'Puerto Vallarta',
+      addressRegion:'Jalisco',
+      addressCountry:'MX'
+    },
+    telephone:'+52 322 111 0294',
+    amenityFeature:[
+      'Private rooftop terrace (~27 m2)',
+      'Outdoor shower',
+      'BBQ grill',
+      'Air conditioning (2 units)'
+    ].map(name => ({ '@type':'LocationFeatureSpecification', name, value:true }))
+  }
 
   const html = `<!doctype html>
 <html lang="${d.htmlLang}">
@@ -159,13 +205,35 @@ export async function getServerSideProps({ res, query }) {
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="description" content="${d.meta}"/>
 <title>${d.title}</title>
-<script src="https://cdn.tailwindcss.com"><\/script>
+<link rel="canonical" href="${canonical}"/>
+<link rel="alternate" hreflang="en" href="${SITE}/"/>
+<link rel="alternate" hreflang="es" href="${SITE}/?lang=es"/>
+<link rel="alternate" hreflang="fr" href="${SITE}/?lang=fr"/>
+<link rel="alternate" hreflang="x-default" href="${SITE}/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Casa Brasil Terrace"/>
+<meta property="og:title" content="${d.title}"/>
+<meta property="og:description" content="${d.meta}"/>
+<meta property="og:url" content="${canonical}"/>
+<meta property="og:image" content="${OG_IMAGE}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:locale" content="${OG_LOCALE[lang]}"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="${d.title}"/>
+<meta name="twitter:description" content="${d.meta}"/>
+<meta name="twitter:image" content="${OG_IMAGE}"/>
+<meta name="theme-color" content="#059669"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link rel="stylesheet" href="/tailwind.css"/>
 <style>
 .glass{backdrop-filter:blur(10px);background:rgba(255,255,255,.78)}
 .shadow-soft{box-shadow:0 12px 35px rgba(0,0,0,.10)}
 .ring-soft{box-shadow:0 0 0 6px rgba(16,185,129,.12)}
 .imgfade:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.10) 55%,rgba(0,0,0,.65) 100%)}
 </style>
+<script type="application/ld+json">${J(ld)}<\/script>
 </head>
 <body class="bg-zinc-50 text-zinc-900">
 
@@ -188,7 +256,7 @@ export async function getServerSideProps({ res, query }) {
 <section class="relative">
 <div class="relative h-[74vh] min-h-[520px] w-full overflow-hidden">
   <div class="imgfade absolute inset-0"></div>
-  <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2400&q=80" alt="${d.tImgAlt}" class="h-full w-full object-cover"/>
+  <img src="${HERO}" alt="${d.tImgAlt}" class="h-full w-full object-cover"/>
   <div class="absolute inset-0 mx-auto flex max-w-6xl items-end px-4 pb-6">
 
     <!-- MOBILE: compact bottom strip -->
@@ -333,7 +401,7 @@ export async function getServerSideProps({ res, query }) {
           <label class="text-sm">${d.fCheckout}<input type="date" class="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-200" name="checkout"/></label>
         </div>
         <label class="text-sm">${d.fMsg}<textarea class="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-200" name="message" rows="4" placeholder="${d.fMsgPh}"></textarea></label>
-        <button class="mt-2 inline-flex items-center justify-center rounded-2xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800">${d.fSubmit}</button>
+        <button type="submit" class="mt-2 inline-flex items-center justify-center rounded-2xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800">${d.fSubmit}</button>
         ${d.fNote ? `<p class="text-xs text-zinc-500">${d.fNote}</p>` : ""}
       </div>
     </form>
@@ -348,6 +416,7 @@ export async function getServerSideProps({ res, query }) {
 </section>
 
 <script>
+const I18N=${J({sending:d.fSending, ok:d.fOk, err:d.fErr, submit:d.fSubmit})};
 document.getElementById("yr").textContent=new Date().getFullYear();
 async function handleSubmit(e){
   e.preventDefault();
@@ -360,7 +429,7 @@ async function handleSubmit(e){
   const checkout=data.get("checkout")||"";
   const message=data.get("message")||"";
   btn.disabled=true;
-  btn.textContent="Sending...";
+  btn.textContent=I18N.sending;
   try {
     const res=await fetch("https://email-service-two-hazel.vercel.app/api/send",{
       method:"POST",
@@ -368,7 +437,7 @@ async function handleSubmit(e){
       body:JSON.stringify({
         to:"info@expatadvisormx.com",
         subject:"[Casa Brasil] Inquiry from "+name,
-        message:"New inquiry from brasil.castlesolutions.mx\n\nName: "+name+"\nEmail: "+email+"\nCheck-in: "+checkin+"\nCheck-out: "+checkout+"\n\nMessage:\n"+message,
+        message:"New inquiry from brasil.castlesolutions.mx\\n\\nName: "+name+"\\nEmail: "+email+"\\nCheck-in: "+checkin+"\\nCheck-out: "+checkout+"\\n\\nMessage:\\n"+message,
         from:email,
         name:name,
         sendFrom:"expatadvisormx.com"
@@ -376,14 +445,14 @@ async function handleSubmit(e){
     });
     const result=await res.json();
     if(result.success){
-      form.innerHTML='<p style="color:#059669;font-weight:600;padding:1rem 0">✓ Message sent! We\'ll get back to you shortly.</p>';
+      form.innerHTML='<p style="color:#059669;font-weight:600;padding:1rem 0">'+I18N.ok+'</p>';
     } else {
       throw new Error(result.error||"Failed");
     }
   } catch(err){
     btn.disabled=false;
-    btn.textContent="Send message";
-    alert("Could not send. Please contact us via WhatsApp.");
+    btn.textContent=I18N.submit;
+    alert(I18N.err);
   }
   return false;
 }
