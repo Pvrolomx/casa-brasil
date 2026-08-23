@@ -9,6 +9,7 @@ export async function getServerSideProps({ res, query }) {
       meta:'Boutique rooftop apartment with private terrace in Puerto Vallarta. Walk to the beach, market and downtown.',
       fSending:'Sending…', fOk:'✓ Message sent! We will get back to you shortly.', fErr:'Could not send. Please contact us via WhatsApp.',
       galleryHint:'Tap any photo to open the full gallery.', lbClose:'Close', lbPrev:'Previous photo', lbNext:'Next photo',
+      upgTitle:'Recently renovated', upgDone:['Renovated bathroom','Freshly painted interiors','New curtains'], upgSoonTitle:'Upgraded before move-in', upgSoon:['New sofa','New TV','New refrigerator'],
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Check availability',
       badge:'Private terrace · beach + market within walking distance · authentic neighborhood',
       heroDesc:'A boutique rooftop apartment with a private terrace in Puerto Vallarta. Walk to the beach, the municipal market and downtown.',
@@ -56,6 +57,7 @@ export async function getServerSideProps({ res, query }) {
       meta:'Apartamento boutique con terraza privada en Puerto Vallarta. Playa, mercado y centro caminando.',
       fSending:'Enviando…', fOk:'✓ ¡Mensaje enviado! Te respondemos en breve.', fErr:'No se pudo enviar. Contáctanos por WhatsApp.',
       galleryHint:'Toca cualquier foto para abrir la galería completa.', lbClose:'Cerrar', lbPrev:'Foto anterior', lbNext:'Foto siguiente',
+      upgTitle:'Recién renovado', upgDone:['Baño renovado','Interiores recién pintados','Cortinas nuevas'], upgSoonTitle:'Se entrega con', upgSoon:['Sofá nuevo','TV nueva','Refrigerador nuevo'],
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Consultar disponibilidad',
       badge:'Terraza privada · playa + mercado municipal caminando · barrio auténtico',
       heroDesc:'Apartamento boutique de 1 recámara con terraza privada para vivir Puerto Vallarta como local: playa, mercado municipal y centro caminando.',
@@ -103,6 +105,7 @@ export async function getServerSideProps({ res, query }) {
       meta:'Appartement boutique avec terrasse privée à Puerto Vallarta. Plage, marché municipal et centre-ville à pied.',
       fSending:'Envoi…', fOk:'✓ Message envoyé ! Nous vous répondrons rapidement.', fErr:'Envoi impossible. Contactez-nous via WhatsApp.',
       galleryHint:'Touchez une photo pour ouvrir la galerie complète.', lbClose:'Fermer', lbPrev:'Photo précédente', lbNext:'Photo suivante',
+      upgTitle:'Récemment rénové', upgDone:['Salle de bain rénovée','Intérieurs repeints','Rideaux neufs'], upgSoonTitle:'Livré avec', upgSoon:['Canapé neuf','Téléviseur neuf','Réfrigérateur neuf'],
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Vérifier les disponibilités',
       badge:'Terrasse privée · plage + marché à pied · quartier authentique',
       heroDesc:'Appartement rooftop boutique avec terrasse privée à Puerto Vallarta. Plage, marché municipal et centre-ville accessibles à pied.',
@@ -158,11 +161,20 @@ export async function getServerSideProps({ res, query }) {
   const maps = 'https://www.google.com/maps/search/?api=1&query=Calle%20Brasil%201434%20Puerto%20Vallarta'
   const SITE = 'https://brasil.castlesolutions.mx'
 
-  // Fotos del departamento tal como se tomaron (agosto 2026), servidas en WebP desde
-  // public/images/. Sin retoque de contenido: no se quitan ni se agregan elementos,
-  // no se altera la arquitectura ni el entorno. Lo unico aplicado es correccion de
-  // exposicion en las tomas oscuras. Tampoco se escalan hacia arriba (llegaron ya
-  // comprimidas a 1280 px), porque agrandar inventa detalle que la camara no capto.
+  // Fotos del departamento, servidas en WebP desde public/images/.
+  //
+  // OJO si vas a editar esto: este set esta RETOCADO CON IA y no corresponde uno a uno
+  // con el inmueble fotografiado. Ademas de limpiar tiradero, la IA redibujo la celosia
+  // de la terraza, cambio el edificio vecino, extendio el pasto e invento una puerta
+  // cerrada donde hay un vano abierto.
+  //
+  // Es una decision tomada por Rolo el 2026-08-22, con el detalle de esas diferencias a
+  // la vista: las tomas de origen son de cuando la remodelacion iba al 70% (antes de
+  // cambiar el bano, repintar y poner cortinas) y subvaluaban el depa frente a un
+  // prospecto. Los originales sin tocar viven en D:/Claude/Brasil/Fotos/New Ones.
+  //
+  // Plan acordado: sustituir todo esto por una sesion nueva del depa ya terminado.
+  // Cuando lleguen esas fotos, este comentario se borra.
   const HERO = '/images/rooftop-panoramica.webp'
 
   // og:image en JPEG y absoluto: WhatsApp y Facebook no siempre resuelven WebP ni rutas relativas.
@@ -170,20 +182,20 @@ export async function getServerSideProps({ res, query }) {
 
   // w/h explicitos para que el navegador reserve el espacio y no brinque el layout al cargar.
   const PHOTOS = [
-    { id: 'rooftop-panoramica', g: 'terrace',  w: 1280, h:  960 },
-    { id: 'terraza-asador',     g: 'terrace',  w: 1280, h:  960 },
-    { id: 'terraza-mesa',       g: 'terrace',  w: 1280, h:  960 },
-    { id: 'terraza-celosia',    g: 'terrace',  w: 1280, h:  960 },
-    { id: 'sala-boveda',        g: 'interior', w: 1280, h:  960 },
-    { id: 'comedor',            g: 'interior', w: 1280, h:  960 },
-    { id: 'cocina',             g: 'interior', w: 1280, h:  960 },
-    { id: 'cocina-ac',          g: 'interior', w: 1280, h:  960 },
-    { id: 'recamara',           g: 'interior', w: 1280, h:  960 },
-    { id: 'recamara-cama',      g: 'interior', w: 1280, h:  960 },
-    { id: 'recamara-tv',        g: 'interior', w: 1280, h:  960 },
-    { id: 'bano-lavabo',        g: 'interior', w: 1280, h:  960 },
-    { id: 'bano-regadera',      g: 'interior', w: 1280, h:  960 },
-    { id: 'bano-detalle',       g: 'interior', w:  960, h: 1280 },
+    { id: 'rooftop-panoramica',   g: 'terrace',  w: 1200, h:  896 },
+    { id: 'terraza-asador',       g: 'terrace',  w: 1200, h:  896 },
+    { id: 'terraza-mesa',         g: 'terrace',  w: 1200, h:  896 },
+    { id: 'terraza-celosia',      g: 'terrace',  w: 1200, h:  896 },
+    { id: 'sala-boveda',          g: 'interior', w: 1200, h:  896 },
+    { id: 'comedor',              g: 'interior', w: 1280, h:  960 },
+    { id: 'cocina',               g: 'interior', w: 1200, h:  896 },
+    { id: 'cocina-ac',            g: 'interior', w: 1280, h:  960 },
+    { id: 'recamara',             g: 'interior', w: 1200, h:  896 },
+    { id: 'recamara-cama',        g: 'interior', w: 1200, h:  896 },
+    { id: 'recamara-tv',          g: 'interior', w: 1200, h:  896 },
+    { id: 'bano-lavabo',          g: 'interior', w: 1200, h:  896 },
+    { id: 'bano-regadera',        g: 'interior', w: 1280, h:  960 },
+    { id: 'bano-detalle',         g: 'interior', w:  960, h: 1280 },
   ]
 
   const PHOTO_ALT = {
@@ -353,7 +365,7 @@ export async function getServerSideProps({ res, query }) {
 <section class="relative">
 <div class="relative h-[74vh] min-h-[520px] w-full overflow-hidden">
   <div class="imgfade absolute inset-0"></div>
-  <img src="${HERO}" alt="${attr(photoAlt['rooftop-panoramica'])}" width="1280" height="960" fetchpriority="high" decoding="async" class="h-full w-full object-cover"/>
+  <img src="${HERO}" alt="${attr(photoAlt['rooftop-panoramica'])}" width="1200" height="896" fetchpriority="high" decoding="async" class="h-full w-full object-cover"/>
   <div class="absolute inset-0 mx-auto flex max-w-6xl items-end px-4 pb-6">
 
     <!-- MOBILE: compact bottom strip -->
@@ -403,7 +415,7 @@ export async function getServerSideProps({ res, query }) {
     </div>
     <div>
       <button type="button" data-photo="1" aria-label="${attr(photoAlt['terraza-asador'])}" class="block w-full rounded-3xl overflow-hidden shadow-soft ring-soft focus:outline-none focus:ring-2 focus:ring-emerald-600">
-        <img src="/images/terraza-asador.webp" alt="${attr(photoAlt['terraza-asador'])}" width="1280" height="960" loading="lazy" decoding="async" class="h-[360px] w-full object-cover md:h-[420px]"/>
+        <img src="/images/terraza-asador.webp" alt="${attr(photoAlt['terraza-asador'])}" width="1200" height="896" loading="lazy" decoding="async" class="h-[360px] w-full object-cover md:h-[420px]"/>
       </button>
       ${grid('terrace')}
       <p class="mt-3 text-xs text-zinc-500">${d.galleryHint}</p>
@@ -414,10 +426,21 @@ export async function getServerSideProps({ res, query }) {
 
 <section id="apartment" class="mx-auto max-w-6xl px-4 py-14">
 <button type="button" data-photo="4" aria-label="${attr(photoAlt['sala-boveda'])}" class="block w-full rounded-3xl overflow-hidden shadow-soft ring-soft focus:outline-none focus:ring-2 focus:ring-emerald-600">
-  <img src="/images/sala-boveda.webp" alt="${attr(photoAlt['sala-boveda'])}" width="1280" height="960" loading="lazy" decoding="async" class="h-[300px] w-full object-cover md:h-[460px]"/>
+  <img src="/images/sala-boveda.webp" alt="${attr(photoAlt['sala-boveda'])}" width="1200" height="896" loading="lazy" decoding="async" class="h-[300px] w-full object-cover md:h-[460px]"/>
 </button>
 ${grid('interior')}
-<p class="mt-3 mb-10 text-xs text-zinc-500">${d.galleryHint}</p>
+<p class="mt-3 text-xs text-zinc-500">${d.galleryHint}</p>
+
+<div class="mt-8 mb-10 grid gap-6 rounded-3xl border border-emerald-200/70 bg-emerald-50/60 p-6 sm:grid-cols-2">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-widest text-emerald-700">${d.upgTitle}</p>
+    <ul class="mt-3 space-y-1.5 text-sm text-zinc-700">${d.upgDone.map(x=>`<li class="flex items-start gap-2"><span class="mt-1.5 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-600"></span><span>${x}</span></li>`).join('')}</ul>
+  </div>
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-widest text-emerald-700">${d.upgSoonTitle}</p>
+    <ul class="mt-3 space-y-1.5 text-sm text-zinc-700">${d.upgSoon.map(x=>`<li class="flex items-start gap-2"><span class="mt-1.5 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-600"></span><span>${x}</span></li>`).join('')}</ul>
+  </div>
+</div>
 <div class="grid gap-10 md:grid-cols-2 md:items-start">
   <div class="rounded-3xl bg-white p-6 shadow-soft border border-zinc-200/60">
     <p class="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-2">${d.aLabel}</p>
