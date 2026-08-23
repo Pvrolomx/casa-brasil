@@ -70,7 +70,7 @@ export async function getServerSideProps({ res, query }) {
       tLabel:'La Terraza', tTitle:'Tu terraza privada',
       tDesc:'La joya del depa: una terraza privada amplia, perfecta para café en la mañana, trabajar con laptop, tomar sol o disfrutar las tardes cálidas de Vallarta.',
       tFeatures:['Terraza privada aprox. 7.7 m × 3.6 m (~27 m²)','Regadera exterior (ideal post-playa)','BBQ grill para parrilladas','Excelente ventilación y ambiente tropical'],
-      tTags:['Sun terrace','Regadera exterior','BBQ'], tImgAlt:'Terraza privada',
+      tTags:['Terraza soleada','Regadera exterior','BBQ'], tImgAlt:'Terraza privada',
       aLabel:'El Departamento', aTitle:'El departamento',
       aDesc:'Sala/comedor/cocina en un solo espacio amplio, con techo alto y muy buen airflow. Dos aires acondicionados para mayor confort.',
       aFeatures:['1 recámara (funcional y fresca)','Espacio abierto sala/comedor/cocina','2 A/C + ventilación natural (muchos días no hacen falta)'],
