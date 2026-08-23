@@ -8,6 +8,7 @@ export async function getServerSideProps({ res, query }) {
       htmlLang:'en', title:'Casa Brasil Terrace | Rooftop Apartment in Puerto Vallarta',
       meta:'Boutique rooftop apartment with private terrace in Puerto Vallarta. Walk to the beach, market and downtown.',
       fSending:'Sending…', fOk:'✓ Message sent! We will get back to you shortly.', fErr:'Could not send. Please contact us via WhatsApp.',
+      galleryHint:'Tap any photo to open the full gallery.', lbClose:'Close', lbPrev:'Previous photo', lbNext:'Next photo',
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Check availability',
       badge:'Private terrace · beach + market within walking distance · authentic neighborhood',
       heroDesc:'A boutique rooftop apartment with a private terrace in Puerto Vallarta. Walk to the beach, the municipal market and downtown.',
@@ -54,6 +55,7 @@ export async function getServerSideProps({ res, query }) {
       htmlLang:'es', title:'Casa Brasil Terrace | Departamento con terraza privada en Puerto Vallarta',
       meta:'Apartamento boutique con terraza privada en Puerto Vallarta. Playa, mercado y centro caminando.',
       fSending:'Enviando…', fOk:'✓ ¡Mensaje enviado! Te respondemos en breve.', fErr:'No se pudo enviar. Contáctanos por WhatsApp.',
+      galleryHint:'Toca cualquier foto para abrir la galería completa.', lbClose:'Cerrar', lbPrev:'Foto anterior', lbNext:'Foto siguiente',
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Consultar disponibilidad',
       badge:'Terraza privada · playa + mercado municipal caminando · barrio auténtico',
       heroDesc:'Apartamento boutique de 1 recámara con terraza privada para vivir Puerto Vallarta como local: playa, mercado municipal y centro caminando.',
@@ -100,6 +102,7 @@ export async function getServerSideProps({ res, query }) {
       htmlLang:'fr', title:'Casa Brasil Terrace | Appartement avec terrasse privée à Puerto Vallarta',
       meta:'Appartement boutique avec terrasse privée à Puerto Vallarta. Plage, marché municipal et centre-ville à pied.',
       fSending:'Envoi…', fOk:'✓ Message envoyé ! Nous vous répondrons rapidement.', fErr:'Envoi impossible. Contactez-nous via WhatsApp.',
+      galleryHint:'Touchez une photo pour ouvrir la galerie complète.', lbClose:'Fermer', lbPrev:'Photo précédente', lbNext:'Photo suivante',
       tagline:'Authentic rooftop living in Puerto Vallarta', cta:'Vérifier les disponibilités',
       badge:'Terrasse privée · plage + marché à pied · quartier authentique',
       heroDesc:'Appartement rooftop boutique avec terrasse privée à Puerto Vallarta. Plage, marché municipal et centre-ville accessibles à pied.',
@@ -155,10 +158,104 @@ export async function getServerSideProps({ res, query }) {
   const maps = 'https://www.google.com/maps/search/?api=1&query=Calle%20Brasil%201434%20Puerto%20Vallarta'
   const SITE = 'https://brasil.castlesolutions.mx'
 
-  // FOTO PRINCIPAL. Hoy es stock de Unsplash: sustituir por la foto real del depa.
-  // Se usa en el hero y, recortada, como og:image (la tarjeta de WhatsApp/Facebook).
-  const HERO = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2400&q=80'
-  const OG_IMAGE = HERO.replace(/w=\d+/, 'w=1200') + '&h=630'
+  // Fotos del departamento tal como se tomaron (agosto 2026), servidas en WebP desde
+  // public/images/. Sin retoque de contenido: no se quitan ni se agregan elementos,
+  // no se altera la arquitectura ni el entorno. Lo unico aplicado es correccion de
+  // exposicion en las tomas oscuras. Tampoco se escalan hacia arriba (llegaron ya
+  // comprimidas a 1280 px), porque agrandar inventa detalle que la camara no capto.
+  const HERO = '/images/rooftop-panoramica.webp'
+
+  // og:image en JPEG y absoluto: WhatsApp y Facebook no siempre resuelven WebP ni rutas relativas.
+  const OG_IMAGE = SITE + '/images/og-casa-brasil.jpg'
+
+  // w/h explicitos para que el navegador reserve el espacio y no brinque el layout al cargar.
+  const PHOTOS = [
+    { id: 'rooftop-panoramica', g: 'terrace',  w: 1280, h:  960 },
+    { id: 'terraza-asador',     g: 'terrace',  w: 1280, h:  960 },
+    { id: 'terraza-mesa',       g: 'terrace',  w: 1280, h:  960 },
+    { id: 'terraza-celosia',    g: 'terrace',  w: 1280, h:  960 },
+    { id: 'sala-boveda',        g: 'interior', w: 1280, h:  960 },
+    { id: 'comedor',            g: 'interior', w: 1280, h:  960 },
+    { id: 'cocina',             g: 'interior', w: 1280, h:  960 },
+    { id: 'cocina-ac',          g: 'interior', w: 1280, h:  960 },
+    { id: 'recamara',           g: 'interior', w: 1280, h:  960 },
+    { id: 'recamara-cama',      g: 'interior', w: 1280, h:  960 },
+    { id: 'recamara-tv',        g: 'interior', w: 1280, h:  960 },
+    { id: 'bano-lavabo',        g: 'interior', w: 1280, h:  960 },
+    { id: 'bano-regadera',      g: 'interior', w: 1280, h:  960 },
+    { id: 'bano-detalle',       g: 'interior', w:  960, h: 1280 },
+  ]
+
+  const PHOTO_ALT = {
+    en: {
+      "rooftop-panoramica": "Panoramic rooftop view toward the Sierra Madre",
+      "terraza-asador": "Private rooftop terrace with BBQ grill",
+      "terraza-mesa": "Shaded dining table on the terrace",
+      "terraza-celosia": "Terrace lattice and hillside view",
+      "sala-boveda": "Living room under a brick vaulted ceiling",
+      "comedor": "Dining area in the open living space",
+      "cocina": "Equipped kitchen with granite counter",
+      "cocina-ac": "Kitchen with A/C unit and vaulted ceiling",
+      "recamara": "Main bedroom with upholstered headboard",
+      "recamara-cama": "Bed with wooden headboard",
+      "recamara-tv": "Wall-mounted TV and wooden shelf",
+      "bano-lavabo": "Contemporary bathroom vanity",
+      "bano-regadera": "Shower with marbled tile",
+      "bano-detalle": "Bathroom detail"
+    },
+    es: {
+      "rooftop-panoramica": "Vista panorámica del rooftop hacia la Sierra Madre",
+      "terraza-asador": "Terraza privada en rooftop con asador",
+      "terraza-mesa": "Mesa con sombra en la terraza",
+      "terraza-celosia": "Celosía de la terraza y vista al cerro",
+      "sala-boveda": "Sala bajo bóveda de ladrillo",
+      "comedor": "Comedor en el espacio abierto",
+      "cocina": "Cocina equipada con barra de granito",
+      "cocina-ac": "Cocina con minisplit y bóveda",
+      "recamara": "Recámara principal con cabecera capitonada",
+      "recamara-cama": "Cama con cabecera de madera",
+      "recamara-tv": "TV en pared y repisa de madera",
+      "bano-lavabo": "Lavabo contemporáneo del baño",
+      "bano-regadera": "Regadera con azulejo marmoleado",
+      "bano-detalle": "Detalle del baño"
+    },
+    fr: {
+      "rooftop-panoramica": "Vue panoramique du rooftop vers la Sierra Madre",
+      "terraza-asador": "Terrasse privée sur le toit avec barbecue",
+      "terraza-mesa": "Table ombragée sur la terrasse",
+      "terraza-celosia": "Claustra de la terrasse et vue sur la colline",
+      "sala-boveda": "Salon sous une voûte en brique",
+      "comedor": "Coin repas dans l’espace ouvert",
+      "cocina": "Cuisine équipée avec plan en granit",
+      "cocina-ac": "Cuisine avec climatiseur et voûte",
+      "recamara": "Chambre principale avec tête de lit capitonnée",
+      "recamara-cama": "Lit avec tête de lit en bois",
+      "recamara-tv": "Télévision murale et étagère en bois",
+      "bano-lavabo": "Vasque contemporaine de la salle de bain",
+      "bano-regadera": "Douche en carrelage marbré",
+      "bano-detalle": "Détail de la salle de bain"
+    }
+  }
+
+  const photoAlt = PHOTO_ALT[lang]
+  const gallery = PHOTOS.map((ph, i) => ({
+    i, g: ph.g, w: ph.w, h: ph.h,
+    src: '/images/' + ph.id + '.webp',
+    thumb: '/images/' + ph.id + '-640.webp',
+    alt: photoAlt[ph.id]
+  }))
+
+  // Escapa texto que va dentro de un atributo HTML. Mismo motivo que J: en este archivo
+  // nada se escribe a mano dentro del template literal.
+  const attr = (v) => String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+  // Cuadricula de miniaturas. Cada boton abre el visor en esa foto; el visor recorre
+  // la galeria completa, no solo el grupo de la cuadricula.
+  const grid = (group) => `<div class="mt-6 grid grid-cols-3 gap-2 sm:gap-3">${gallery
+    .filter((ph) => ph.g === group)
+    .map((ph) => `<button type="button" data-photo="${ph.i}" aria-label="${attr(ph.alt)}" class="group relative overflow-hidden rounded-xl ring-1 ring-zinc-200/70 focus:outline-none focus:ring-2 focus:ring-emerald-600 sm:rounded-2xl"><img src="${ph.thumb}" alt="${attr(ph.alt)}" width="${ph.w}" height="${ph.h}" loading="lazy" decoding="async" class="h-20 w-full object-cover transition duration-300 group-hover:scale-105 sm:h-28"/></button>`)
+    .join('')}</div>`
   const OG_LOCALE = { en:'en_US', es:'es_MX', fr:'fr_FR' }
   const canonical = SITE + (lang === 'en' ? '/' : '/?lang=' + lang)
 
@@ -256,7 +353,7 @@ export async function getServerSideProps({ res, query }) {
 <section class="relative">
 <div class="relative h-[74vh] min-h-[520px] w-full overflow-hidden">
   <div class="imgfade absolute inset-0"></div>
-  <img src="${HERO}" alt="${d.tImgAlt}" class="h-full w-full object-cover"/>
+  <img src="${HERO}" alt="${attr(photoAlt['rooftop-panoramica'])}" width="1280" height="960" fetchpriority="high" decoding="async" class="h-full w-full object-cover"/>
   <div class="absolute inset-0 mx-auto flex max-w-6xl items-end px-4 pb-6">
 
     <!-- MOBILE: compact bottom strip -->
@@ -304,14 +401,23 @@ export async function getServerSideProps({ res, query }) {
       <ul class="mt-5 space-y-2 text-sm text-zinc-700">${d.tFeatures.map(f=>`<li>• ${f}</li>`).join('')}</ul>
       <div class="mt-6 flex flex-wrap gap-2">${d.tTags.map(t=>`<span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">${t}</span>`).join('')}</div>
     </div>
-    <div class="rounded-3xl overflow-hidden shadow-soft ring-soft">
-      <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=2000&q=80" alt="${d.tImgAlt}" class="h-[360px] w-full object-cover md:h-[420px]"/>
+    <div>
+      <button type="button" data-photo="1" aria-label="${attr(photoAlt['terraza-asador'])}" class="block w-full rounded-3xl overflow-hidden shadow-soft ring-soft focus:outline-none focus:ring-2 focus:ring-emerald-600">
+        <img src="/images/terraza-asador.webp" alt="${attr(photoAlt['terraza-asador'])}" width="1280" height="960" loading="lazy" decoding="async" class="h-[360px] w-full object-cover md:h-[420px]"/>
+      </button>
+      ${grid('terrace')}
+      <p class="mt-3 text-xs text-zinc-500">${d.galleryHint}</p>
     </div>
   </div>
 </div>
 </section>
 
 <section id="apartment" class="mx-auto max-w-6xl px-4 py-14">
+<button type="button" data-photo="4" aria-label="${attr(photoAlt['sala-boveda'])}" class="block w-full rounded-3xl overflow-hidden shadow-soft ring-soft focus:outline-none focus:ring-2 focus:ring-emerald-600">
+  <img src="/images/sala-boveda.webp" alt="${attr(photoAlt['sala-boveda'])}" width="1280" height="960" loading="lazy" decoding="async" class="h-[300px] w-full object-cover md:h-[460px]"/>
+</button>
+${grid('interior')}
+<p class="mt-3 mb-10 text-xs text-zinc-500">${d.galleryHint}</p>
 <div class="grid gap-10 md:grid-cols-2 md:items-start">
   <div class="rounded-3xl bg-white p-6 shadow-soft border border-zinc-200/60">
     <p class="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-2">${d.aLabel}</p>
@@ -415,7 +521,18 @@ export async function getServerSideProps({ res, query }) {
 </footer>
 </section>
 
+<div id="lb" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4" role="dialog" aria-modal="true" aria-label="${attr(d.tLabel)}">
+  <button type="button" id="lb-close" aria-label="${attr(d.lbClose)}" class="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl leading-none text-white hover:bg-white/20 sm:right-6 sm:top-6">&times;</button>
+  <button type="button" id="lb-prev" aria-label="${attr(d.lbPrev)}" class="absolute left-2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-3xl leading-none text-white hover:bg-white/20 sm:left-6">&#8249;</button>
+  <button type="button" id="lb-next" aria-label="${attr(d.lbNext)}" class="absolute right-2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-3xl leading-none text-white hover:bg-white/20 sm:right-6">&#8250;</button>
+  <figure class="w-full max-w-5xl">
+    <img id="lb-img" alt="" class="mx-auto max-h-[78vh] w-auto rounded-2xl object-contain"/>
+    <figcaption class="mt-3 text-center text-sm text-white/80"><span id="lb-cap"></span><span id="lb-n" class="ml-3 text-white/40"></span></figcaption>
+  </figure>
+</div>
+
 <script>
+const GALLERY=${J(gallery.map(g => ({ src: g.src, alt: g.alt })))};
 const I18N=${J({sending:d.fSending, ok:d.fOk, err:d.fErr, submit:d.fSubmit})};
 document.getElementById("yr").textContent=new Date().getFullYear();
 async function handleSubmit(e){
@@ -456,6 +573,52 @@ async function handleSubmit(e){
   }
   return false;
 }
+
+// Visor de galeria. Cualquier elemento con data-photo="N" lo abre en esa foto y de
+// ahi se recorre la galeria completa con flechas, teclado o swipe implicito.
+(function(){
+  var lb=document.getElementById("lb");
+  if(!lb || !GALLERY.length) return;
+  var img=document.getElementById("lb-img"), cap=document.getElementById("lb-cap"),
+      num=document.getElementById("lb-n"), btnClose=document.getElementById("lb-close");
+  var idx=0, abierto=false;
+
+  function show(i){
+    idx=(i+GALLERY.length)%GALLERY.length;
+    var g=GALLERY[idx];
+    img.src=g.src; img.alt=g.alt;
+    cap.textContent=g.alt;
+    num.textContent=(idx+1)+" / "+GALLERY.length;
+  }
+  function abrir(i){
+    show(i);
+    lb.classList.remove("hidden"); lb.classList.add("flex");
+    document.body.style.overflow="hidden";
+    abierto=true; btnClose.focus();
+  }
+  function cerrar(){
+    lb.classList.add("hidden"); lb.classList.remove("flex");
+    document.body.style.overflow="";
+    abierto=false;
+  }
+
+  var botones=document.querySelectorAll("[data-photo]");
+  for(var k=0;k<botones.length;k++){
+    (function(b){
+      b.addEventListener("click", function(){ abrir(parseInt(b.getAttribute("data-photo"),10)||0); });
+    })(botones[k]);
+  }
+  btnClose.addEventListener("click", cerrar);
+  document.getElementById("lb-prev").addEventListener("click", function(e){ e.stopPropagation(); show(idx-1); });
+  document.getElementById("lb-next").addEventListener("click", function(e){ e.stopPropagation(); show(idx+1); });
+  lb.addEventListener("click", function(e){ if(e.target===lb) cerrar(); });
+  document.addEventListener("keydown", function(e){
+    if(!abierto) return;
+    if(e.key==="Escape") cerrar();
+    else if(e.key==="ArrowLeft") show(idx-1);
+    else if(e.key==="ArrowRight") show(idx+1);
+  });
+})();
 <\/script>
 </body>
 </html>`
