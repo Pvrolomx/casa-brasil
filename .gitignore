@@ -2,3 +2,8 @@ node_modules/
 .next/
 # generado en build por el script "css" (ver package.json)
 public/tailwind.css
+
+# fuentes sin optimizar: al repo solo van los .webp que genera el pipeline.
+# el HO de AGY dice "copiar los archivos de Edited/ a public/images/" y por ahi
+# se cuela el JPEG original de 700+ KB que nada referencia.
+public/images/*.jpeg
