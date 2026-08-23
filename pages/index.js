@@ -186,7 +186,6 @@ export async function getServerSideProps({ res, query }) {
     { id: 'terraza-asador',       g: 'terrace',  w: 1200, h:  896 },
     { id: 'terraza-mesa',         g: 'terrace',  w: 1200, h:  896 },
     { id: 'terraza-celosia',      g: 'terrace',  w: 1200, h:  896 },
-    { id: 'sala-boveda',          g: 'interior', w: 1200, h:  896 },
     { id: 'comedor',              g: 'interior', w: 1280, h:  960 },
     { id: 'cocina',               g: 'interior', w: 1200, h:  896 },
     { id: 'cocina-ac',            g: 'interior', w: 1280, h:  960 },
@@ -204,7 +203,6 @@ export async function getServerSideProps({ res, query }) {
       "terraza-asador": "Private rooftop terrace with BBQ grill",
       "terraza-mesa": "Shaded dining table on the terrace",
       "terraza-celosia": "Terrace lattice and hillside view",
-      "sala-boveda": "Living room under a brick vaulted ceiling",
       "comedor": "Dining area in the open living space",
       "cocina": "Equipped kitchen with granite counter",
       "cocina-ac": "Kitchen with A/C unit and vaulted ceiling",
@@ -220,7 +218,6 @@ export async function getServerSideProps({ res, query }) {
       "terraza-asador": "Terraza privada en rooftop con asador",
       "terraza-mesa": "Mesa con sombra en la terraza",
       "terraza-celosia": "Celosía de la terraza y vista al cerro",
-      "sala-boveda": "Sala bajo bóveda de ladrillo",
       "comedor": "Comedor en el espacio abierto",
       "cocina": "Cocina equipada con barra de granito",
       "cocina-ac": "Cocina con minisplit y bóveda",
@@ -236,7 +233,6 @@ export async function getServerSideProps({ res, query }) {
       "terraza-asador": "Terrasse privée sur le toit avec barbecue",
       "terraza-mesa": "Table ombragée sur la terrasse",
       "terraza-celosia": "Claustra de la terrasse et vue sur la colline",
-      "sala-boveda": "Salon sous une voûte en brique",
       "comedor": "Coin repas dans l’espace ouvert",
       "cocina": "Cuisine équipée avec plan en granit",
       "cocina-ac": "Cuisine avec climatiseur et voûte",
@@ -251,11 +247,15 @@ export async function getServerSideProps({ res, query }) {
 
   const photoAlt = PHOTO_ALT[lang]
   const gallery = PHOTOS.map((ph, i) => ({
-    i, g: ph.g, w: ph.w, h: ph.h,
+    i, id: ph.id, g: ph.g, w: ph.w, h: ph.h,
     src: '/images/' + ph.id + '.webp',
     thumb: '/images/' + ph.id + '-640.webp',
     alt: photoAlt[ph.id]
   }))
+
+  // Posicion de una foto dentro del visor, buscada por id. A mano se desalinea en
+  // silencio en cuanto se quita una foto de en medio (ya paso al retirar la sala).
+  const at = (id) => gallery.findIndex((ph) => ph.id === id)
 
   // Escapa texto que va dentro de un atributo HTML. Mismo motivo que J: en este archivo
   // nada se escribe a mano dentro del template literal.
@@ -414,7 +414,7 @@ export async function getServerSideProps({ res, query }) {
       <div class="mt-6 flex flex-wrap gap-2">${d.tTags.map(t=>`<span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">${t}</span>`).join('')}</div>
     </div>
     <div>
-      <button type="button" data-photo="1" aria-label="${attr(photoAlt['terraza-asador'])}" class="block w-full rounded-3xl overflow-hidden shadow-soft ring-soft focus:outline-none focus:ring-2 focus:ring-emerald-600">
+      <button type="button" data-photo="${at('terraza-asador')}" aria-label="${attr(photoAlt['terraza-asador'])}" class="block w-full rounded-3xl overflow-hidden shadow-soft ring-soft focus:outline-none focus:ring-2 focus:ring-emerald-600">
         <img src="/images/terraza-asador.webp" alt="${attr(photoAlt['terraza-asador'])}" width="1200" height="896" loading="lazy" decoding="async" class="h-[360px] w-full object-cover md:h-[420px]"/>
       </button>
       ${grid('terrace')}
@@ -425,8 +425,8 @@ export async function getServerSideProps({ res, query }) {
 </section>
 
 <section id="apartment" class="mx-auto max-w-6xl px-4 py-14">
-<button type="button" data-photo="4" aria-label="${attr(photoAlt['sala-boveda'])}" class="block w-full rounded-3xl overflow-hidden shadow-soft ring-soft focus:outline-none focus:ring-2 focus:ring-emerald-600">
-  <img src="/images/sala-boveda.webp" alt="${attr(photoAlt['sala-boveda'])}" width="1200" height="896" loading="lazy" decoding="async" class="h-[300px] w-full object-cover md:h-[460px]"/>
+<button type="button" data-photo="${at('comedor')}" aria-label="${attr(photoAlt['comedor'])}" class="block w-full rounded-3xl overflow-hidden shadow-soft ring-soft focus:outline-none focus:ring-2 focus:ring-emerald-600">
+  <img src="/images/comedor.webp" alt="${attr(photoAlt['comedor'])}" width="1280" height="960" loading="lazy" decoding="async" class="h-[300px] w-full object-cover md:h-[460px]"/>
 </button>
 ${grid('interior')}
 <p class="mt-3 text-xs text-zinc-500">${d.galleryHint}</p>
